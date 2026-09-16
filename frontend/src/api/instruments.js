@@ -1,33 +1,15 @@
-import axios from ''axios'';
+import axios from 'axios';
 
-const api = axios.create({
-  baseURL: ''/api/v1'',
-  headers: { ''Content-Type'': ''application/json'' },
-});
+const api = axios.create({ baseURL: '/api/v1' });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem(''access_token'');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  const token = localStorage.getItem('access_token');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
 export const instrumentsApi = {
-  search: async (filters = {}) => {
-    const { data } = await api.get(''/instruments'', { params: filters });
-    return data;
-  },
-
-  getById: async (id) => {
-    const { data } = await api.get(`/instruments/${id}`);
-    return data;
-  },
-
-  create: async (instrument) => {
-    const { data } = await api.post(''/instruments'', instrument);
-    return data;
-  },
+  search: async (filters = {}) => (await api.get('/instruments', { params: filters })).data,
+  getById: async (id) => (await api.get(`/instruments/${id}`)).data,
+  create: async (instrument) => (await api.post('/instruments', instrument)).data,
 };
-
-export default api;

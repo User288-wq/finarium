@@ -7,9 +7,12 @@ import com.entreprise.finarium.entity.InstrumentStatus;
 import com.entreprise.finarium.entity.InstrumentType;
 import com.entreprise.finarium.repository.InstrumentRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,11 +31,13 @@ public class InstrumentService {
         String devise,
         Pageable pageable
     ) {
+        // Recherche par ISIN (résultat unique)
         if (isin != null && !isin.isBlank()) {
             return repository.findByIsin(isin)
-                .map(i -> Page.of(toDto(i)))
+                .map(i -> (Page<InstrumentDto>) new PageImpl<>(List.of(toDto(i))))
                 .orElse(Page.empty());
         }
+        // Recherche multi-critères
         return repository.findByTypeAndStatutAndDevise(type, statut, devise, pageable)
             .map(this::toDto);
     }

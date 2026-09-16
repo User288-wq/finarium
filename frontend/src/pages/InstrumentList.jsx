@@ -1,40 +1,31 @@
-import { useState } from ''react'';
-import { useQuery } from ''@tanstack/react-query'';
-import { Link } from ''react-router-dom'';
-import {
-  Box, TextField, Table, TableHead, TableBody, TableRow, TableCell,
-  CircularProgress, Alert, Button, Typography, Paper
-} from ''@mui/material'';
-import { instrumentsApi } from ''../api/instruments'';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { Box, TextField, Table, TableHead, TableBody, TableRow,
+  TableCell, CircularProgress, Alert, Button, Typography, Paper } from '@mui/material';
+import { instrumentsApi } from '../api/instruments';
 
 export default function InstrumentList() {
   const [filters, setFilters] = useState({ isin: '' });
-
   const { data, isLoading, error } = useQuery({
-    queryKey: [''instruments'', filters],
+    queryKey: ['instruments', filters],
     queryFn: () => instrumentsApi.search(filters),
   });
 
   return (
     <Box>
-      <Box sx={{ display: ''flex'', justifyContent: ''space-between'', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h4">Instruments financiers</Typography>
         <Button component={Link} to="/instruments/new" variant="contained">
           Nouvel instrument
         </Button>
       </Box>
-
-      <TextField
-        fullWidth
-        label="Rechercher par ISIN"
+      <TextField fullWidth label="Rechercher par ISIN"
         value={filters.isin}
-        onChange={(e) => setFilters({ ...filters, isin: e.target.value.toUpperCase() })}
-        sx={{ mb: 3 }}
-      />
-
+        onChange={(e) => setFilters({ isin: e.target.value.toUpperCase() })}
+        sx={{ mb: 3 }} />
       {isLoading && <CircularProgress />}
       {error && <Alert severity="error">Erreur de chargement</Alert>}
-
       {data && (
         <Paper>
           <Table>
@@ -48,13 +39,13 @@ export default function InstrumentList() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {(data.content || []).map((instrument) => (
-                <TableRow key={instrument.id} hover>
-                  <TableCell>{instrument.isin}</TableCell>
-                  <TableCell>{instrument.libelle}</TableCell>
-                  <TableCell>{instrument.type}</TableCell>
-                  <TableCell>{instrument.devise}</TableCell>
-                  <TableCell>{instrument.statut}</TableCell>
+              {(data.content || []).map((i) => (
+                <TableRow key={i.id} hover>
+                  <TableCell>{i.isin}</TableCell>
+                  <TableCell>{i.libelle}</TableCell>
+                  <TableCell>{i.type}</TableCell>
+                  <TableCell>{i.devise}</TableCell>
+                  <TableCell>{i.statut}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
